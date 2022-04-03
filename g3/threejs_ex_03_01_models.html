@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<!--
+
+		threejs_ex_03_01_models.html
+
+		J. Madeira - March 2021
+
+-->
+
+<head>
+
+	<title>three.js example 01 &mdash; Some Models</title>
+
+	<meta charset="utf-8">
+
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<style>
+		body {
+
+			background-color: #ffffff;
+
+			/* To use the complete page */
+
+			margin: 0px;
+
+			overflow: hidden;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<!-- The library --- Can be a local version -->
+
+	<script type="text/javascript" src="http://threejs.org/build/three.js"></script>
+
+	<!-- Javascript code that runs the Three.js example -->
+
+	<script type="text/javascript">
+
+		function createTree(cylinderRadius, cylinderHeight, baseConeRadius, coneHeight) {
+
+			// Creating a model by grouping basic geometries
+
+			// Cylinder centered at the origin
+
+			const cylinderGeometry = new THREE.CylinderGeometry(cylinderRadius, cylinderRadius, cylinderHeight, 32);
+
+			const redMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+
+			const cylinder = new THREE.Mesh(cylinderGeometry, redMaterial);
+
+			cylinder.castShadow = true; 
+			cylinder.receiveShadow = true;
+
+			// Move base of the cylinder to y = 0
+
+			cylinder.position.y = cylinderHeight / 2.0;
+
+			// Cone
+
+			const coneGeometry = new THREE.ConeGeometry(baseConeRadius, coneHeight, 32);
+
+			const greenMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+
+			const cone = new THREE.Mesh(coneGeometry, greenMaterial);
+
+			cone.castShadow = true; 
+			cone.receiveShadow = true;
+
+			// Move base of the cone to the top of the cylinder
+
+			cone.position.y = cylinderHeight + coneHeight / 2.0;
+
+			// Tree
+
+			var tree = new THREE.Group();
+
+			tree.add(cylinder);
+
+			tree.add(cone);
+
+			return tree;
+		}
+
+		// Once everything is loaded, run this function
+
+		function init() {
+
+			// The SCENE
+
+			var scene = new THREE.Scene();
+
+			// The GROUND plane
+
+			var planeGeometry = new THREE.PlaneGeometry(1000, 1000);
+			var planeMaterial = new THREE.MeshPhongMaterial({ color: 0x1BCC1E });
+			var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+			plane.receiveShadow = true;
+
+			// Rotate and position the plane
+
+			plane.rotation.x = -0.5 * Math.PI; // TODO: What happens if you comment out this line of code?
+			plane.position.x = 15;
+			plane.position.y = 0;
+			plane.position.z = 0;
+
+			// Add to the scene
+
+			scene.add(plane);
+
+			// The coordinate axes
+
+			var axes = new THREE.AxesHelper(15);
+
+			scene.add(axes);
+
+			// Adding models to the scene
+			// createTree(cylinderRadius, cylinderHeight, baseConeRadius, coneHeight)
+
+			var tree_1 = createTree(5, 20, 10, 30);
+
+			tree_1.position.x = -50;
+			tree_1.position.z = -25;
+
+			scene.add(tree_1);
+
+
+			var tree_2 = createTree(8, 20, 15, 30);
+
+			tree_2.position.x = -50;
+			tree_2.position.z = 30;
+
+			scene.add(tree_2);
+
+
+			var tree_3 = createTree(5, 40, 10, 50);
+
+			tree_3.position.x = 50;
+			tree_3.position.z = -25;
+
+			scene.add(tree_3);
+
+
+			var tree_4 = createTree(5, 15, 10, 25);
+
+			tree_4.position.x = 50;
+			tree_4.position.z = -25;
+
+			scene.add(tree_4);
+
+
+			var tree_5 = createTree(12, 64, 23, 24);
+			scene.add(tree_5);
+
+			var tree_6 = createTree(5, 5, 10, 5);
+			scene.add(tree_6);
+
+			var tree_7 = createTree(1, 25, 3, 70);
+			scene.add(tree_7);
+
+			// The CAMERA --- A camera is added to the scene
+
+			// --- Where the viewer is and how he is looking at the scene
+
+			var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 400);
+
+			camera.position.y = 50;
+
+			camera.position.z = 150;
+
+			// Point the camera to the center of the scene
+
+			camera.lookAt(scene.position);
+
+			scene.add(camera)
+
+
+			// white spotlight shining from the side, casting a shadow
+
+			const spotLight = new THREE.SpotLight( 0xffffff );
+			spotLight.position.set( -100, 50, 100 );
+
+			spotLight.castShadow = true;
+
+			spotLight.shadowMapWidth = 2048;
+			spotLight.shadowMapHeight= 2048;
+
+			// spotLight.shadow.mapSize.width = 1024;
+			// spotLight.shadow.mapSize.height = 1024;
+
+			// spotLight.shadow.camera.near = 500;
+			// spotLight.shadow.camera.far = 4000;
+			// spotLight.shadow.camera.fov = 30;
+
+			scene.add( spotLight );
+
+			// const spotLightHelper = new THREE.SpotLightHelper( spotLight );
+			// scene.add( spotLightHelper );
+
+
+			// The RENDERER --- To display the scene on the Web page
+
+			var renderer = new THREE.WebGLRenderer({ antialias: true });
+
+			renderer.setClearColor(new THREE.Color(0xffffff));
+
+			renderer.setPixelRatio(window.devicePixelRatio);
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMapType = THREE.PCFSoftShadowMap;
+
+			// Add the output of the renderer
+
+			document.body.appendChild(renderer.domElement);
+
+			// Render the scene
+
+			renderer.render(scene, camera);
+
+			var step = 0; 
+			// Update model features and render the scene 
+			renderScene() 
+			
+			function renderScene() { 
+				step += 0.04; 
+				
+				// tree_4.position.x = 30 * Math.cos(step) + 50;	// somar as coordenadas do local onde queremos
+				// tree_4.position.z = 30 * Math.sin(step) + -25; 	
+
+				tree_4.position.z = -100 + (-100 * Math.cos(step)); 
+
+				tree_3.position.x = 50 + (40 * Math.cos(step)); 
+
+				tree_2.position.x = -50 + (30 * Math.cos(step)); 
+
+				tree_1.position.z = -25 + (80 * Math.cos(step)); 
+
+				tree_5.rotation.y += 0.05
+				tree_5.position.x = 170 * Math.cos(step) + 0;	// somar as coordenadas do local onde queremos
+				tree_5.position.z = 170 * Math.sin(step) + 0; 
+				
+				tree_6.rotation.y += 5;
+				tree_6.position.x = 10 * Math.cos(step) + 0;	// somar as coordenadas do local onde queremos
+				tree_6.position.z = 10 * Math.sin(step) + 0; 
+
+				tree_7.rotation.y += 5;
+				tree_7.position.x = 10 * Math.cos(step) + 50;	// somar as coordenadas do local onde queremos
+				tree_7.position.z = 10 * Math.sin(step) + 60;
+
+		
+				requestAnimationFrame(renderScene); 
+				renderer.render(scene, camera); 
+			}
+		}
+
+		window.onload = init
+
+	</script>
+
+</body>
+
+</html>
