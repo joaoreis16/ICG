@@ -1,34 +1,34 @@
+// ************** //
+// squared images //
+// ************** //
+// 'img/paulo.png';             // 10x10
+// 'img/einstein50.jpg';        // 50x50
+// 'img/terra.jpg';             // 50x50
+// 'img/kfc.png';               // 50x50
+// 'img/nbc.jpg';               // 50x50
+// 'img/einstein.jpg';          // 100x100
+// 'img/lisa150.jpg';           // 150x150
+// 'img/azul.jpg';              // 200x200
+// 'img/pylance.png';           // 262x257
+// 'img/lisa.jpg';              // 300x300
+//
+// ***************** //
+// rectangled images //
+// ***************** //
+// 'img/nike100x50.jpg';        // 100x50
+// 'img/nike200x100.jpg';       // 200x100
+
+const { Key_$type } = require("igniteui-angular-core");
+
+
 const sceneElements = {
     sceneGraph: null,
     camera: null,
     renderer: null,
 };
 
-
-// ************** //
-// squared images //
-// ************** //
-// 'img/paulo.png';             // 10x10
-
-// 'img/einstein50.jpg';        // 50x50
-// 'img/terra.jpg';             // 50x50
-// 'img/kfc.png';               // 50x50
-// 'img/nbc.jpg';               // 50x50
-
-// 'img/einstein.jpg';          // 100x100
-// 'img/lisa150.jpg';           // 150x150
-// 'img/azul.jpg';              // 200x200
-// 'img/pylance.png';           // 262x257
-// 'img/lisa.jpg';              // 300x300
-
-// **************** //
-// rectangled images //
-// **************** //
-// 'img/nike100x50.jpg';        // 100x50
-// 'img/nike200x100.jpg';       // 200x100
-
-
-var imgUrl = 'img/nbc.jpg';
+const myImg = new Image();
+var imgUrl = randomImg();
 
 helper.initEmptyScene(sceneElements);
 load3DObjects(sceneElements.sceneGraph);
@@ -60,15 +60,20 @@ function resizeWindow(eventParam) {
 }
 
 
+function randomImg() {    
+    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/terra.jpg', 'img/einstein50.jpg']; 
+    let random_index = Math.floor(Math.random() * all_imgs.length);
+    console.log("A imagem escolhida é "+ all_imgs[random_index])
+    imgUrl = all_imgs[random_index];
+    return imgUrl;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // Create and insert in the scene graph the models of the 3D scene
 function load3DObjects(sceneGraph) {
-
-    var axesHelper = new THREE.AxesHelper( 100 );
-    // sceneGraph.add( axesHelper );
-
 
     const planeGeometry = new THREE.PlaneGeometry(500, 500);
     const planeMaterial = new THREE.MeshPhongMaterial({ color: 'rgb(200, 200, 200)', side: THREE.DoubleSide });
@@ -88,7 +93,6 @@ function load3DObjects(sceneGraph) {
     const map = new Map();
 
     // load image 
-    const myImg = new Image();
     myImg.crossOrigin = "Anonymous";
 
     myImg.onload = () => {
@@ -263,16 +267,6 @@ function computeFrame(time) {
 }
 
 
-
-function randomImg() {    
-    // const all_imgs = ['img/paulo.png', 'img/einstein50.jpg', 'img/einstein.jpg', 'img/lisa150.jpg', 'img/azul.jpg', 'img/pylance.png', 'img/lisa.jpg', 'img/nike100x50.jpg', 'img/nike200x100.jpg'];
-    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/terra.jpg', 'img/einstein50.jpg']; 
-    let random_index = Math.floor(Math.random() * all_imgs.length);
-    console.log("A imagem escolhida é "+ all_imgs[random_index])
-    imgUrl = all_imgs[random_index];
-    return imgUrl;
-}
-
 function onDocumentKeyDown(event) {
     switch (event.keyCode) {
         case 68: //d
@@ -350,8 +344,7 @@ function onDocumentKeyUp(event) {
 document.onkeydown = function(event) {
     event.preventDefault();
     if (event.key === 'Enter') {       // Enter
-        randomImg();
+        myImg.src = imgUrl
         // window.location.reload()
     }
-
 };

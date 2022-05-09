@@ -14,6 +14,9 @@ const helper = {
         camera.position.set(0, 100, 50); // 0 ,50, 50
         camera.lookAt(0, 0, 0);
 
+        var axesHelper = new THREE.AxesHelper( 100 );
+        sceneElements.sceneGraph.add( axesHelper );
+
 
         // Add ambient light
         const ambientLight = new THREE.AmbientLight('rgb(255, 255, 255)', 0.2);
@@ -29,6 +32,17 @@ const helper = {
         spotLight.shadow.mapSize.height = 2048;
 
         spotLight.name = "light";
+
+        // Add a second spotlight (with shadows)
+        const spotLight2 = new THREE.SpotLight('rgb(255, 255, 255)', 0.3);
+        spotLight2.position.set(80, 250, 0);
+        sceneElements.sceneGraph.add(spotLight2);
+
+        spotLight2.castShadow = true;
+        spotLight2.shadow.mapSize.width = 2048;
+        spotLight2.shadow.mapSize.height = 2048;
+
+        spotLight2.name = "light2";
 
         // Spotlight Helper
         const spotLightHelper = new THREE.SpotLightHelper( spotLight, 'rgb(225, 0, 0)');
