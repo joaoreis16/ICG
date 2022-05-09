@@ -32,7 +32,7 @@ const helper = {
 
         // Spotlight Helper
         const spotLightHelper = new THREE.SpotLightHelper( spotLight, 'rgb(225, 0, 0)');
-        sceneElements.sceneGraph.add( spotLightHelper );
+        // sceneElements.sceneGraph.add( spotLightHelper );
 
         // Create renderer (with shadow map)
         const renderer = new THREE.WebGLRenderer({ antialias: true });

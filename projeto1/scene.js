@@ -5,6 +5,31 @@ const sceneElements = {
 };
 
 
+// ************** //
+// squared images //
+// ************** //
+// 'img/paulo.png';             // 10x10
+
+// 'img/einstein50.jpg';        // 50x50
+// 'img/terra.jpg';             // 50x50
+// 'img/kfc.png';               // 50x50
+// 'img/nbc.jpg';               // 50x50
+
+// 'img/einstein.jpg';          // 100x100
+// 'img/lisa150.jpg';           // 150x150
+// 'img/azul.jpg';              // 200x200
+// 'img/pylance.png';           // 262x257
+// 'img/lisa.jpg';              // 300x300
+
+// **************** //
+// rectangled images //
+// **************** //
+// 'img/nike100x50.jpg';        // 100x50
+// 'img/nike200x100.jpg';       // 200x100
+
+
+var imgUrl = 'img/nbc.jpg';
+
 helper.initEmptyScene(sceneElements);
 load3DObjects(sceneElements.sceneGraph);
 requestAnimationFrame(computeFrame);
@@ -14,7 +39,9 @@ requestAnimationFrame(computeFrame);
 // Event Listeners
 //To keep track of the keyboard - WASD
 var keyD = false, keyA = false, keyS = false, keyW = false;
-var up = false, down = false, left = false, right = false, space = false;
+var up = false, down = false, left = false, right = false;
+var space = false; var enter = false;
+
 document.addEventListener('keydown', onDocumentKeyDown, false);
 document.addEventListener('keyup', onDocumentKeyUp, false);
 
@@ -40,7 +67,7 @@ function resizeWindow(eventParam) {
 function load3DObjects(sceneGraph) {
 
     var axesHelper = new THREE.AxesHelper( 100 );
-    sceneGraph.add( axesHelper );
+    // sceneGraph.add( axesHelper );
 
 
     const planeGeometry = new THREE.PlaneGeometry(500, 500);
@@ -51,11 +78,15 @@ function load3DObjects(sceneGraph) {
     planeObject.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
     planeObject.receiveShadow = true;
 
-    // cube
 
+    // button
+    createButton(sceneGraph, -200, -200, 'rgb(0,250,0)');
+
+    // cube
     createMainObject( sceneGraph, 5, 5, 5, 20, 20, 'rgb(250,0,0)' );
 
-    
+    const map = new Map();
+
     // load image 
     const myImg = new Image();
     myImg.crossOrigin = "Anonymous";
@@ -63,12 +94,14 @@ function load3DObjects(sceneGraph) {
     myImg.onload = () => {
         const context = document.createElement('canvas').getContext('2d');
         context.drawImage(myImg, 0, 0);
-        
+
         var position_x = -(myImg.width/2 + myImg.width/4);
         var position_z = -(myImg.height/2 + myImg.height/4);
 
-        for (let x = 0; x < myImg.width; x++) {
-            for (let z = myImg.height; z > 0; z--) {
+        for (let z = 0; z < myImg.height; z++) {
+            for (let x = 0; x < myImg.width; x++) {
+    
+                // get data from image
                 const {data} = context.getImageData(x, z, 1, 1);
                 let red = data[0];
                 let green = data[1];
@@ -79,7 +112,9 @@ function load3DObjects(sceneGraph) {
                 let rgb_value = Math.round(height);
                 let grey = "rgb("+ rgb_value +","+ rgb_value +","+ rgb_value +")";
 
-                createCube( sceneGraph, height/3, position_x, position_z, grey );
+                let bar = createBar( sceneGraph, height/3, position_x, position_z, grey );
+
+                map.set(bar, height/3);
                 position_x += 1.5;
             }
             position_x = -(myImg.width/2 + myImg.width/4);
@@ -87,26 +122,45 @@ function load3DObjects(sceneGraph) {
         }
     }
 
-    // myImg.src = 'img/paulo.png';         // 10x10
-    // myImg.src = 'img/einstein50.jpg';      // 50x50
-    // myImg.src = 'img/einstein.jpg';      // 100x100
-    // myImg.src = 'img/azul.jpg';          // 200x200
-    // myImg.src = 'img/lisa.jpg';          // 300x300
+    console.log(imgUrl);
 
-    myImg.src = 'img/nike100x50.jpg';          // 100x50
-    // myImg.src = 'img/nike200x100.jpg';          // 200x100
+    myImg.src = imgUrl;
+
+    helper.render(sceneElements); 
+
+    var step = 0; 
+    renderScene();
+    
+    function renderScene() { 
+        step += 1; 
+
+        for (const [bar, height] of map.entries()) {
+
+            const b = sceneElements.sceneGraph.getObjectByName( bar );
+
+            if (step <= height) {
+                b.scale.set(1, step, 1);
+                b.translateY(0.5);
+            }
+        }
+
+        requestAnimationFrame(renderScene); 
+        helper.render(sceneElements); 
+    }
 
 }
 
 
-function createCube(sceneGraph, h, x, z, rgb) {
+var index = 0;
 
-    const cubeGeometry = new THREE.BoxGeometry(1, h, 1);
+function createBar(sceneGraph, h, x, z, rgb) {
+
+    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cubeMaterial = new THREE.MeshPhongMaterial({ color: rgb });
     const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     sceneGraph.add(cube);
 
-    cube.translateY(h/2);
+    cube.translateY(0.5);
 
     cube.position.x = x;
     cube.position.z = z;
@@ -114,8 +168,12 @@ function createCube(sceneGraph, h, x, z, rgb) {
     cube.castShadow = true;
     cube.receiveShadow = true;
 
-    cube.name = "cube";
+    cube.name = "bar"+ index;
+    index++;
+
+    return cube.name
 }
+
 
 function createMainObject(sceneGraph, a, b, h, x, z, rgb) {
 
@@ -133,13 +191,30 @@ function createMainObject(sceneGraph, a, b, h, x, z, rgb) {
     cube.receiveShadow = true;
 
     cube.name = "main_cube";
+}
 
+
+function createButton(sceneGraph, x, z, rgb) {
+
+    const cubeGeometry = new THREE.BoxGeometry(50, 1, 20);
+    const cubeMaterial = new THREE.MeshPhongMaterial({ color: rgb });
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    sceneGraph.add(cube);
+
+    cube.translateY(0.5);
+
+    cube.position.x = x;
+    cube.position.z = z;
+
+    cube.castShadow = true;
+    cube.receiveShadow = true;
+
+    cube.name = "button";
 }
 
 
 
-var step = 0;
-var dispX = 5, dispY = 5, dispZ = 5;
+var dispX = 8, dispY = 8, dispZ = 8;
 
 function computeFrame(time) {
 
@@ -174,10 +249,11 @@ function computeFrame(time) {
     }
 
     if (space) {
-        /* cube.position.x = cube.position.x + (10 * Math.cos(step)); 
-        cube.position.y = cube.position.y + (10 * Math.abs(Math.sin(step)));  */
+        cube.position.y = (10 * Math.abs(Math.sin(300))); 
         space = false
     }
+
+    
     
     // Rendering
     helper.render(sceneElements);
@@ -186,6 +262,16 @@ function computeFrame(time) {
     requestAnimationFrame(computeFrame);
 }
 
+
+
+function randomImg() {    
+    // const all_imgs = ['img/paulo.png', 'img/einstein50.jpg', 'img/einstein.jpg', 'img/lisa150.jpg', 'img/azul.jpg', 'img/pylance.png', 'img/lisa.jpg', 'img/nike100x50.jpg', 'img/nike200x100.jpg'];
+    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/terra.jpg', 'img/einstein50.jpg']; 
+    let random_index = Math.floor(Math.random() * all_imgs.length);
+    console.log("A imagem escolhida é "+ all_imgs[random_index])
+    imgUrl = all_imgs[random_index];
+    return imgUrl;
+}
 
 function onDocumentKeyDown(event) {
     switch (event.keyCode) {
@@ -219,6 +305,7 @@ function onDocumentKeyDown(event) {
         case 32: // space
             space = true;
             break;
+
     }
 }
 
@@ -255,5 +342,16 @@ function onDocumentKeyUp(event) {
         case 32: // space
             space = false;
             break;
+
     }
 }
+
+
+document.onkeydown = function(event) {
+    event.preventDefault();
+    if (event.key === 'Enter') {       // Enter
+        randomImg();
+        // window.location.reload()
+    }
+
+};
