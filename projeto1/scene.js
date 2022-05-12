@@ -18,17 +18,17 @@
 // 'img/nike100x50.jpg';        // 100x50
 // 'img/nike200x100.jpg';       // 200x100
 
-const { Key_$type } = require("igniteui-angular-core");
-
-
 const sceneElements = {
     sceneGraph: null,
     camera: null,
     renderer: null,
 };
 
+const pixel_map = new Map();
+const bar_map = new Map();
 const myImg = new Image();
 var imgUrl = randomImg();
+var form_created = false;
 
 helper.initEmptyScene(sceneElements);
 load3DObjects(sceneElements.sceneGraph);
@@ -85,12 +85,10 @@ function load3DObjects(sceneGraph) {
 
 
     // button
-    createButton(sceneGraph, -200, -200, 'rgb(0,250,0)');
+    createButton(sceneGraph, -100, -100, 'rgb(0,250,0)');
 
     // cube
     createMainObject( sceneGraph, 5, 5, 5, 20, 20, 'rgb(250,0,0)' );
-
-    const map = new Map();
 
     // load image 
     myImg.crossOrigin = "Anonymous";
@@ -99,9 +97,37 @@ function load3DObjects(sceneGraph) {
         const context = document.createElement('canvas').getContext('2d');
         context.drawImage(myImg, 0, 0);
 
-        var position_x = -(myImg.width/2 + myImg.width/4);
-        var position_z = -(myImg.height/2 + myImg.height/4);
+        if (!form_created) {
+            createForm(sceneGraph, myImg.width, myImg.height);
+            form_created = true;
+        }
 
+        for (let z = 0; z < myImg.height; z++) {
+            for (let x = 0; x < myImg.width; x++) {
+    
+                // get data from image
+                const {data} = context.getImageData(x, z, 1, 1);
+                let red = data[0];
+                let green = data[1];
+                let blue = data[2];
+                
+                // Grey level = 0.299 * red component + 0.587 * green component + 0.114 * blue component 
+                // [fonte: https://www.stemmer-imaging.com/en/knowledge-base/grey-level-grey-value/ ] 
+                let height = (0.299 * red + 0.587 * green + 0.114 * blue);
+                let rgb_value = Math.round(height);
+                let grey = "rgb("+ rgb_value+","+ rgb_value +","+ rgb_value +")";
+
+                let key = z +"_"+ x;
+                let bar_name = bar_map.get(key);
+
+                bar = sceneElements.sceneGraph.getObjectByName(bar_name);
+                bar.material.color.set( grey );
+
+                pixel_map.set(bar_name, height/3);
+            }
+        }
+
+        /* 
         for (let z = 0; z < myImg.height; z++) {
             for (let x = 0; x < myImg.width; x++) {
     
@@ -114,7 +140,7 @@ function load3DObjects(sceneGraph) {
                 // Grey level = 0.299 * red component + 0.587 * green component + 0.114 * blue component [fonte: https://www.stemmer-imaging.com/en/knowledge-base/grey-level-grey-value/ ] 
                 let height = (0.299 * red + 0.587 * green + 0.114 * blue);
                 let rgb_value = Math.round(height);
-                let grey = "rgb("+ rgb_value +","+ rgb_value +","+ rgb_value +")";
+                let grey = "rgb("+ rgb_value+","+ rgb_value +","+ rgb_value +")";
 
                 let bar = createBar( sceneGraph, height/3, position_x, position_z, grey );
 
@@ -123,29 +149,27 @@ function load3DObjects(sceneGraph) {
             }
             position_x = -(myImg.width/2 + myImg.width/4);
             position_z += 1.5;
-        }
+        } */
     }
-
-    console.log(imgUrl);
 
     myImg.src = imgUrl;
 
     helper.render(sceneElements); 
-
-    var step = 0; 
     renderScene();
     
+    var step = 0; 
     function renderScene() { 
         step += 1; 
 
-        for (const [bar, height] of map.entries()) {
+        for (const [bar_name, height] of pixel_map.entries()) {
 
-            const b = sceneElements.sceneGraph.getObjectByName( bar );
+            const bar = sceneElements.sceneGraph.getObjectByName( bar_name );
 
             if (step <= height) {
-                b.scale.set(1, step, 1);
-                b.translateY(0.5);
-            }
+                bar.scale.set(1, step, 1);
+                bar.translateY(0.5);
+            } 
+
         }
 
         requestAnimationFrame(renderScene); 
@@ -159,23 +183,23 @@ var index = 0;
 
 function createBar(sceneGraph, h, x, z, rgb) {
 
-    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const cubeMaterial = new THREE.MeshPhongMaterial({ color: rgb });
-    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    sceneGraph.add(cube);
+    const barGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const barMaterial = new THREE.MeshPhongMaterial({ color: rgb });
+    const bar = new THREE.Mesh(barGeometry, barMaterial);
+    sceneGraph.add(bar);
 
-    cube.translateY(0.5);
+    bar.translateY(0.5);
 
-    cube.position.x = x;
-    cube.position.z = z;
+    bar.position.x = x;
+    bar.position.z = z;
 
-    cube.castShadow = true;
-    cube.receiveShadow = true;
+    bar.castShadow = true;
+    bar.receiveShadow = true;
 
-    cube.name = "bar"+ index;
+    bar.name = "bar"+ index;
     index++;
 
-    return cube.name
+    return bar.name
 }
 
 
@@ -216,7 +240,26 @@ function createButton(sceneGraph, x, z, rgb) {
     cube.name = "button";
 }
 
+// ************************************************************************************************
+function createForm(sceneGraph, width, height) {
 
+    var position_x = -(myImg.width/2 + myImg.width/4);
+    var position_z = -(myImg.height/2 + myImg.height/4);
+
+    for (let z = 0; z < height; z++) {
+        for (let x = 0; x < width; x++) {
+
+            let bar = createBar( sceneGraph, 1, position_x, position_z, 'rgb(0,0,0)' );
+            let key = z +"_"+ x;
+            bar_map.set(key, bar);
+            
+            position_x += 1.5;
+        }
+        position_x = -(myImg.width/2 + myImg.width/4);
+        position_z += 1.5;
+    }
+}
+// ************************************************************************************************
 
 var dispX = 8, dispY = 8, dispZ = 8;
 
@@ -344,7 +387,6 @@ function onDocumentKeyUp(event) {
 document.onkeydown = function(event) {
     event.preventDefault();
     if (event.key === 'Enter') {       // Enter
-        myImg.src = imgUrl
-        // window.location.reload()
+        myImg.src = randomImg();
     }
 };
