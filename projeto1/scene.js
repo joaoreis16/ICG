@@ -297,13 +297,13 @@ function pressButton() {
     if (checkPressButton()) {
         button.position.y = -1.25;
         click_sound();
+        changeImage();
 
     } else {
         button.position.y = 1.5;
     }
 
     if (times == 1) {
-        changeImage();
         helper.render(sceneElements);
         requestAnimationFrame(pressButton)
     }
