@@ -15,7 +15,7 @@ const helper = {
         camera.lookAt(0, 0, 0);
 
         var axesHelper = new THREE.AxesHelper( 100 );
-        sceneElements.sceneGraph.add( axesHelper );
+        // sceneElements.sceneGraph.add( axesHelper );
 
 
         // Add ambient light

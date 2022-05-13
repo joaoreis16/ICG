@@ -34,45 +34,9 @@ helper.initEmptyScene(sceneElements);
 load3DObjects(sceneElements.sceneGraph);
 requestAnimationFrame(computeFrame);
 
-// HANDLING EVENTS
 
-// Event Listeners
-//To keep track of the keyboard - WASD
-var keyD = false, keyA = false, keyS = false, keyW = false;
-var up = false, down = false, left = false, right = false;
-var space = false; var enter = false;
+//////////////////////////////////////////////// MAIN FUNCTION /////////////////////////////////////////////////////////////
 
-document.addEventListener('keydown', onDocumentKeyDown, false);
-document.addEventListener('keyup', onDocumentKeyUp, false);
-
-window.addEventListener('resize', resizeWindow);
-
-
-// Update render image size and camera aspect when the window is resized
-function resizeWindow(eventParam) {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    sceneElements.camera.aspect = width / height;
-    sceneElements.camera.updateProjectionMatrix();
-
-    sceneElements.renderer.setSize(width, height);
-}
-
-
-function randomImg() {    
-    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/terra.jpg', 'img/einstein50.jpg']; 
-    let random_index = Math.floor(Math.random() * all_imgs.length);
-    console.log("A imagem escolhida é "+ all_imgs[random_index])
-    imgUrl = all_imgs[random_index];
-    return imgUrl;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// Create and insert in the scene graph the models of the 3D scene
 function load3DObjects(sceneGraph) {
 
     const planeGeometry = new THREE.PlaneGeometry(500, 500);
@@ -83,12 +47,11 @@ function load3DObjects(sceneGraph) {
     planeObject.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
     planeObject.receiveShadow = true;
 
-
     // button
-    createButton(sceneGraph, -100, -100, 'rgb(0,250,0)');
+    createButton(sceneGraph, -100, 0, 'rgb(65,105,225)');
 
     // cube
-    createMainObject( sceneGraph, 5, 5, 5, 20, 20, 'rgb(250,0,0)' );
+    createMainObject( sceneGraph, 5, 5, 5, 0, 50, 'rgb(250,0,0)' );
 
     // load image 
     myImg.crossOrigin = "Anonymous";
@@ -115,7 +78,7 @@ function load3DObjects(sceneGraph) {
                 // [fonte: https://www.stemmer-imaging.com/en/knowledge-base/grey-level-grey-value/ ] 
                 let height = (0.299 * red + 0.587 * green + 0.114 * blue);
                 let rgb_value = Math.round(height);
-                let grey = "rgb("+ rgb_value+","+ rgb_value +","+ rgb_value +")";
+                let grey = "rgb("+ rgb_value +","+ rgb_value +","+ rgb_value +")";
 
                 let key = z +"_"+ x;
                 let bar_name = bar_map.get(key);
@@ -126,50 +89,31 @@ function load3DObjects(sceneGraph) {
                 pixel_map.set(bar_name, height/3);
             }
         }
-
-        /* 
-        for (let z = 0; z < myImg.height; z++) {
-            for (let x = 0; x < myImg.width; x++) {
-    
-                // get data from image
-                const {data} = context.getImageData(x, z, 1, 1);
-                let red = data[0];
-                let green = data[1];
-                let blue = data[2];
-                
-                // Grey level = 0.299 * red component + 0.587 * green component + 0.114 * blue component [fonte: https://www.stemmer-imaging.com/en/knowledge-base/grey-level-grey-value/ ] 
-                let height = (0.299 * red + 0.587 * green + 0.114 * blue);
-                let rgb_value = Math.round(height);
-                let grey = "rgb("+ rgb_value+","+ rgb_value +","+ rgb_value +")";
-
-                let bar = createBar( sceneGraph, height/3, position_x, position_z, grey );
-
-                map.set(bar, height/3);
-                position_x += 1.5;
-            }
-            position_x = -(myImg.width/2 + myImg.width/4);
-            position_z += 1.5;
-        } */
     }
 
     myImg.src = imgUrl;
 
     helper.render(sceneElements); 
     renderScene();
-    
-    var step = 0; 
+     
     function renderScene() { 
-        step += 1; 
 
         for (const [bar_name, height] of pixel_map.entries()) {
 
             const bar = sceneElements.sceneGraph.getObjectByName( bar_name );
+            let atual_height = bar.scale.y;
 
-            if (step <= height) {
-                bar.scale.set(1, step, 1);
-                bar.translateY(0.5);
-            } 
+            if (atual_height > height) {
+                atual_height -= 1;
+                bar.scale.set(1, atual_height, 1);
+                bar.translateY(0);
+            }
 
+            if (atual_height < height) {
+                atual_height += 1; 
+                bar.scale.set(1, atual_height, 1);
+                bar.translateY(0);
+            }
         }
 
         requestAnimationFrame(renderScene); 
@@ -178,7 +122,7 @@ function load3DObjects(sceneGraph) {
 
 }
 
-
+//////////////////////////////////////////////// CREATE OBJECTS 3D /////////////////////////////////////////////////////////////
 var index = 0;
 
 function createBar(sceneGraph, h, x, z, rgb) {
@@ -204,7 +148,7 @@ function createBar(sceneGraph, h, x, z, rgb) {
 
 
 function createMainObject(sceneGraph, a, b, h, x, z, rgb) {
-
+    
     const cubeGeometry = new THREE.BoxGeometry(a, h, b);
     const cubeMaterial = new THREE.MeshPhongMaterial({ color: rgb });
     const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
@@ -216,20 +160,32 @@ function createMainObject(sceneGraph, a, b, h, x, z, rgb) {
     cube.position.z = z;
 
     cube.castShadow = true;
-    cube.receiveShadow = true;
+    cube.receiveShadow = true; 
 
     cube.name = "main_cube";
+   
 }
 
 
 function createButton(sceneGraph, x, z, rgb) {
 
-    const cubeGeometry = new THREE.BoxGeometry(50, 1, 20);
-    const cubeMaterial = new THREE.MeshPhongMaterial({ color: rgb });
-    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    const texture = new THREE.TextureLoader().load( 'textures/textura.png' );
+    const cubeGeometry = new THREE.BoxGeometry(50, 3, 20);
+
+    var cubeMaterialArray = [];
+    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { map: texture } ) );
+    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    
+    var cubeMaterials = new THREE.MeshFaceMaterial( cubeMaterialArray );
+
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterials);
     sceneGraph.add(cube);
 
-    cube.translateY(0.5);
+    cube.translateY(1.5);
 
     cube.position.x = x;
     cube.position.z = z;
@@ -240,7 +196,6 @@ function createButton(sceneGraph, x, z, rgb) {
     cube.name = "button";
 }
 
-// ************************************************************************************************
 function createForm(sceneGraph, width, height) {
 
     var position_x = -(myImg.width/2 + myImg.width/4);
@@ -259,13 +214,15 @@ function createForm(sceneGraph, width, height) {
         position_z += 1.5;
     }
 }
-// ************************************************************************************************
 
-var dispX = 8, dispY = 8, dispZ = 8;
 
+//////////////////////////////////////////////// ANIMATIONS AND INTERACTIONS /////////////////////////////////////////////////////////////
+
+var dispX = 4, dispY = 4, dispZ = 4;
 function computeFrame(time) {
 
     const cube = sceneElements.sceneGraph.getObjectByName("main_cube");
+    const button = sceneElements.sceneGraph.getObjectByName("button");
 
     let plane_size = 500/2; 
 
@@ -295,20 +252,84 @@ function computeFrame(time) {
         cube.translateZ(dispZ);
     }
 
-    if (space) {
-        cube.position.y = (10 * Math.abs(Math.sin(300))); 
-        space = false
+
+    if (!checkPressButton()) {
+        button.position.y = 1.5;
+        cube.position.y = 2.5;
+
+    } else {
+        cube.position.y = 5.5;
+        
     }
-
     
-    
-    // Rendering
     helper.render(sceneElements);
-
-    // Call for the next frame
     requestAnimationFrame(computeFrame);
 }
 
+var step = 0;
+var times = 0;
+
+function jump() {
+    step += 0.5; 
+
+    const cube = sceneElements.sceneGraph.getObjectByName("main_cube");
+
+    cube.position.y = (20 * Math.abs(Math.sin(step)));
+
+
+    if (step < 3) {
+        helper.render(sceneElements);
+        requestAnimationFrame(jump);
+
+    } else {
+        times = 0;
+        step = 0;
+        pressButton();
+    }
+
+}
+
+function pressButton() {
+    times += 1;
+
+    const button = sceneElements.sceneGraph.getObjectByName("button");
+    
+    if (checkPressButton()) {
+        button.position.y = -1.25;
+        click_sound();
+
+    } else {
+        button.position.y = 1.5;
+    }
+
+    if (times == 1) {
+        changeImage();
+        helper.render(sceneElements);
+        requestAnimationFrame(pressButton)
+    }
+}
+
+
+document.onkeydown = function(event) {
+    event.preventDefault();
+
+    if (event.key === ' ') {    // Blank Space
+        jump();
+
+        /* let pressed = checkPressButton();
+
+        if (pressed) {
+            myImg.src = randomImg();
+        } */
+    }
+};
+
+
+var keyD = false, keyA = false, keyS = false, keyW = false;
+var up = false, down = false, left = false, right = false;
+
+document.addEventListener('keydown', onDocumentKeyDown, false);
+document.addEventListener('keyup', onDocumentKeyUp, false);
 
 function onDocumentKeyDown(event) {
     switch (event.keyCode) {
@@ -337,10 +358,6 @@ function onDocumentKeyDown(event) {
             break;
         case 40: // down
             down = true;
-            break;
-
-        case 32: // space
-            space = true;
             break;
 
     }
@@ -376,17 +393,70 @@ function onDocumentKeyUp(event) {
             down = false;
             break;
 
-        case 32: // space
-            space = false;
-            break;
-
     }
 }
 
+window.addEventListener('resize', resizeWindow);
 
-document.onkeydown = function(event) {
-    event.preventDefault();
-    if (event.key === 'Enter') {       // Enter
-        myImg.src = randomImg();
+function resizeWindow(eventParam) {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    sceneElements.camera.aspect = width / height;
+    sceneElements.camera.updateProjectionMatrix();
+
+    sceneElements.renderer.setSize(width, height);
+}
+
+
+//////////////////////////////////////////////// OTHER FUNCTIONS /////////////////////////////////////////////////////////////
+
+function randomImg() {    
+    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein50.jpg']; 
+
+    // Para garantir que não repete imagens
+    if (imgUrl != undefined) {
+        const index = all_imgs.indexOf( imgUrl );
+        if (index > -1) {
+            all_imgs.splice(index, 1);
+        }
     }
-};
+
+    let random_index = Math.floor(Math.random() * all_imgs.length);
+
+    console.log("A imagem escolhida é "+ all_imgs[random_index]);
+    all_imgs.push(imgUrl);
+
+    imgUrl = all_imgs[random_index];
+    return imgUrl;
+}
+
+
+function checkPressButton() {
+    const cube = sceneElements.sceneGraph.getObjectByName("main_cube");
+
+    let x = cube.position.x; let z = cube.position.z;
+
+    if (x > -125 && x < -75 && z < 10 && z > -10) return true
+    return false
+}
+
+
+function click_sound() {
+
+    const listener = new THREE.AudioListener();
+    sceneElements.camera.add( listener );
+    const sound = new THREE.Audio( listener );
+    const audioLoader = new THREE.AudioLoader();
+
+    audioLoader.load( 'sounds/click.mp3', function( buffer ) {
+        sound.setBuffer( buffer );
+        sound.setVolume( 0.5 );
+        sound.play();
+    });
+
+}
+
+function changeImage() {
+    myImg.src = randomImg();
+}
