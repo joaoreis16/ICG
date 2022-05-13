@@ -1,23 +1,3 @@
-// ************** //
-// squared images //
-// ************** //
-// 'img/paulo.png';             // 10x10
-// 'img/einstein50.jpg';        // 50x50
-// 'img/terra.jpg';             // 50x50
-// 'img/kfc.png';               // 50x50
-// 'img/nbc.jpg';               // 50x50
-// 'img/einstein.jpg';          // 100x100
-// 'img/lisa150.jpg';           // 150x150
-// 'img/azul.jpg';              // 200x200
-// 'img/pylance.png';           // 262x257
-// 'img/lisa.jpg';              // 300x300
-//
-// ***************** //
-// rectangled images //
-// ***************** //
-// 'img/nike100x50.jpg';        // 100x50
-// 'img/nike200x100.jpg';       // 200x100
-
 const sceneElements = {
     sceneGraph: null,
     camera: null,
@@ -35,7 +15,7 @@ load3DObjects(sceneElements.sceneGraph);
 requestAnimationFrame(computeFrame);
 
 
-//////////////////////////////////////////////// MAIN FUNCTION /////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////// MAIN FUNCTION /////////////////////////////////////////////////////////////
 
 function load3DObjects(sceneGraph) {
 
@@ -122,10 +102,10 @@ function load3DObjects(sceneGraph) {
 
 }
 
-//////////////////////////////////////////////// CREATE OBJECTS 3D /////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////// CREATE OBJECTS 3D /////////////////////////////////////////////////////////////
 var index = 0;
 
-function createBar(sceneGraph, h, x, z, rgb) {
+function createBar(sceneGraph, x, z, rgb) {
 
     const barGeometry = new THREE.BoxGeometry(1, 1, 1);
     const barMaterial = new THREE.MeshPhongMaterial({ color: rgb });
@@ -204,7 +184,7 @@ function createForm(sceneGraph, width, height) {
     for (let z = 0; z < height; z++) {
         for (let x = 0; x < width; x++) {
 
-            let bar = createBar( sceneGraph, 1, position_x, position_z, 'rgb(0,0,0)' );
+            let bar = createBar( sceneGraph, position_x, position_z, 'rgb(0,0,0)' );
             let key = z +"_"+ x;
             bar_map.set(key, bar);
             
@@ -216,7 +196,7 @@ function createForm(sceneGraph, width, height) {
 }
 
 
-//////////////////////////////////////////////// ANIMATIONS AND INTERACTIONS /////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////// ANIMATIONS AND INTERACTIONS /////////////////////////////////////////////////////////////
 
 var dispX = 4, dispY = 4, dispZ = 4;
 function computeFrame(time) {
@@ -317,12 +297,6 @@ document.onkeydown = function(event) {
 
     if (event.key === ' ') {    // Blank Space
         jump();
-
-        /* let pressed = checkPressButton();
-
-        if (pressed) {
-            myImg.src = randomImg();
-        } */
     }
 };
 
@@ -364,8 +338,6 @@ function onDocumentKeyDown(event) {
 
     }
 }
-
-
 function onDocumentKeyUp(event) {
     switch (event.keyCode) {
         case 68: //d
@@ -411,10 +383,10 @@ function resizeWindow(eventParam) {
 }
 
 
-//////////////////////////////////////////////// OTHER FUNCTIONS /////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////// OTHER FUNCTIONS /////////////////////////////////////////////////////////////
 
 function randomImg() {    
-    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein50.jpg']; 
+    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein.jpg', 'img/bart.png', 'img/andré.png', 'img/peugeot.png']; 
 
     // Para garantir que não repete imagens
     if (imgUrl != undefined) {
