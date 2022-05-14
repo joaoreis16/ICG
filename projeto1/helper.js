@@ -35,7 +35,7 @@ const helper = {
 
         // Add a second spotlight (with shadows)
         const spotLight2 = new THREE.SpotLight('rgb(255, 255, 255)', 0.3);
-        spotLight2.position.set(80, 250, 0);
+        spotLight2.position.set(250, 200, 0);
         sceneElements.sceneGraph.add(spotLight2);
 
         spotLight2.castShadow = true;
@@ -45,7 +45,7 @@ const helper = {
         spotLight2.name = "light2";
 
         // Spotlight Helper
-        const spotLightHelper = new THREE.SpotLightHelper( spotLight, 'rgb(225, 0, 0)');
+        const spotLightHelper = new THREE.SpotLightHelper( spotLight2, 'rgb(225, 0, 0)');
         // sceneElements.sceneGraph.add( spotLightHelper );
 
         // Create renderer (with shadow map)

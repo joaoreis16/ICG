@@ -74,9 +74,9 @@ function load3DObjects(sceneGraph) {
     myImg.src = imgUrl;
 
     helper.render(sceneElements); 
-    renderScene();
+    renderAnimation();
      
-    function renderScene() { 
+    function renderAnimation() { 
 
         for (const [bar_name, height] of pixel_map.entries()) {
 
@@ -84,19 +84,30 @@ function load3DObjects(sceneGraph) {
             let atual_height = bar.scale.y;
 
             if (atual_height > height) {
-                atual_height -= 1;
-                bar.scale.set(1, atual_height, 1);
-                bar.translateY(0);
+                if (atual_height - 1 < height) {
+                    bar.scale.set(1, height, 1);
+
+                } else {
+                    atual_height -= 1;
+                    bar.scale.set(1, atual_height, 1);
+                }
             }
 
             if (atual_height < height) {
-                atual_height += 1; 
-                bar.scale.set(1, atual_height, 1);
-                bar.translateY(0);
+                if (atual_height + 1 > height) {
+                    bar.scale.set(1, height, 1);
+                   
+                } else {
+                    atual_height += 1; 
+                    bar.scale.set(1, atual_height, 1);
+                }
+                 
             }
+
+            bar.translateY(0);
         }
 
-        requestAnimationFrame(renderScene); 
+        requestAnimationFrame(renderAnimation); 
         helper.render(sceneElements); 
     }
 
@@ -386,7 +397,8 @@ function resizeWindow(eventParam) {
 // ////////////////////////////////////////////// OTHER FUNCTIONS /////////////////////////////////////////////////////////////
 
 function randomImg() {    
-    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein.jpg', 'img/bart.png', 'img/andré.png', 'img/peugeot.png']; 
+    // const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein.jpg', 'img/bart.png', 'img/andré.png', 'img/peugeot.png', 'img/monalisa.jpg']; 
+    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein.jpg', 'img/peugeot.png', 'img/monalisa.jpg']; 
 
     // Para garantir que não repete imagens
     if (imgUrl != undefined) {
@@ -397,8 +409,7 @@ function randomImg() {
     }
 
     let random_index = Math.floor(Math.random() * all_imgs.length);
-
-    console.log("A imagem escolhida é "+ all_imgs[random_index]);
+    // console.log("A imagem escolhida é "+ all_imgs[random_index]);
     all_imgs.push(imgUrl);
 
     imgUrl = all_imgs[random_index];
