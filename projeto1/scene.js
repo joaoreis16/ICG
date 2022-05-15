@@ -70,7 +70,7 @@ function load3DObjects(sceneGraph) {
                 bar = sceneElements.sceneGraph.getObjectByName(bar_name);
                 bar.material.color.set( grey );
 
-                pixel_map.set(bar_name, height/3);
+                pixel_map.set(bar_name, height/2);
             }
         }
     }
