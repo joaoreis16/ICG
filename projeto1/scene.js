@@ -1,14 +1,18 @@
-const sceneElements = {
-    sceneGraph: null,
-    camera: null,
-    renderer: null,
-};
+// ICG - 1st project 
+// João Reis, 98474
 
+// const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein.jpg', 'img/bart.png', 'img/andré.png', 'img/peugeot.png', 'img/monalisa.jpg']; 
+const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein.jpg', 'img/peugeot.png', 'img/monalisa.jpg']; 
 const pixel_map = new Map();
 const bar_map = new Map();
 const myImg = new Image();
 var imgUrl = randomImg();
 var form_created = false;
+const sceneElements = {
+    sceneGraph: null,
+    camera: null,
+    renderer: null,
+};
 
 helper.initEmptyScene(sceneElements);
 load3DObjects(sceneElements.sceneGraph);
@@ -30,7 +34,7 @@ function load3DObjects(sceneGraph) {
     // button
     createButton(sceneGraph, -100, 0, 'rgb(65,105,225)');
 
-    // cube
+    // main cube
     createMainObject( sceneGraph, 5, 5, 5, 0, 50, 'rgb(250,0,0)' );
 
     // load image 
@@ -189,8 +193,8 @@ function createButton(sceneGraph, x, z, rgb) {
 
 function createForm(sceneGraph, width, height) {
 
-    var position_x = -(myImg.width/2 + myImg.width/4);
-    var position_z = -(myImg.height/2 + myImg.height/4);
+    var position_x = -(width/2 + width/4);
+    var position_z = -(width/2 + height/4);
 
     for (let z = 0; z < height; z++) {
         for (let x = 0; x < width; x++) {
@@ -201,7 +205,7 @@ function createForm(sceneGraph, width, height) {
             
             position_x += 1.5;
         }
-        position_x = -(myImg.width/2 + myImg.width/4);
+        position_x = -(width/2 + width/4);
         position_z += 1.5;
     }
 }
@@ -302,16 +306,6 @@ function pressButton() {
     }
 }
 
-
-document.onkeydown = function(event) {
-    event.preventDefault();
-
-    if (event.key === ' ') {    // Blank Space
-        jump();
-    }
-};
-
-
 var keyD = false, keyA = false, keyS = false, keyW = false;
 var up = false, down = false, left = false, right = false;
 
@@ -347,6 +341,10 @@ function onDocumentKeyDown(event) {
             down = true;
             break;
 
+
+        case 32: // Space
+            jump();
+            break;
     }
 }
 function onDocumentKeyUp(event) {
@@ -397,9 +395,6 @@ function resizeWindow(eventParam) {
 // ////////////////////////////////////////////// OTHER FUNCTIONS /////////////////////////////////////////////////////////////
 
 function randomImg() {    
-    // const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein.jpg', 'img/bart.png', 'img/andré.png', 'img/peugeot.png', 'img/monalisa.jpg']; 
-    const all_imgs = ['img/nbc.jpg', 'img/kfc.png', 'img/einstein.jpg', 'img/peugeot.png', 'img/monalisa.jpg']; 
-
     // Para garantir que não repete imagens
     if (imgUrl != undefined) {
         const index = all_imgs.indexOf( imgUrl );
@@ -409,7 +404,6 @@ function randomImg() {
     }
 
     let random_index = Math.floor(Math.random() * all_imgs.length);
-    // console.log("A imagem escolhida é "+ all_imgs[random_index]);
     all_imgs.push(imgUrl);
 
     imgUrl = all_imgs[random_index];
