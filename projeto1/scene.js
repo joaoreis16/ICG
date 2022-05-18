@@ -404,7 +404,10 @@ function randomImg() {
     }
 
     let random_index = Math.floor(Math.random() * all_imgs.length);
-    all_imgs.push(imgUrl);
+
+    if (imgUrl != undefined) {
+        all_imgs.push(imgUrl);
+    }
 
     imgUrl = all_imgs[random_index];
     return imgUrl;
