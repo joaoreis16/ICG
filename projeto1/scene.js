@@ -8,6 +8,7 @@ const bar_map = new Map();
 const myImg = new Image();
 var imgUrl = randomImg();
 var form_created = false;
+
 const sceneElements = {
     sceneGraph: null,
     camera: null,
