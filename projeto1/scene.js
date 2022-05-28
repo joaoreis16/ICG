@@ -168,17 +168,15 @@ function createButton(sceneGraph, x, z, rgb) {
     const texture = new THREE.TextureLoader().load( 'textures/textura.png' );
     const cubeGeometry = new THREE.BoxGeometry(50, 3, 20);
 
-    var cubeMaterialArray = [];
-    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
-    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
-    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { map: texture } ) );
-    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
-    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
-    cubeMaterialArray.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
-    
-    var cubeMaterials = new THREE.MeshFaceMaterial( cubeMaterialArray );
+    var cubeMaterial = [];
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { map: texture } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
 
-    const cube = new THREE.Mesh(cubeGeometry, cubeMaterials);
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     sceneGraph.add(cube);
 
     cube.translateY(1.5);
