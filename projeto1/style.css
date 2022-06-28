@@ -2,3 +2,9 @@
 body { 
 	margin: 0px;
 }
+
+
+#userImage {
+	position: absolute;
+	visibility: hidden;
+}

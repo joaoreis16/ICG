@@ -32,8 +32,11 @@ function load3DObjects(sceneGraph) {
     planeObject.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
     planeObject.receiveShadow = true;
 
-    // button
-    createButton(sceneGraph, -100, 0, 'rgb(65,105,225)');
+    // change button
+    createButton(sceneGraph, -100, 0, 'rgb(65,105,225)', "button", 'textures/change.png');
+
+    // upload button
+    createButton(sceneGraph, 100, 0, 'rgb(65,105,225)', "upload", 'textures/upload.png');
 
     // main cube
     createMainObject( sceneGraph, 5, 5, 5, 0, 50, 'rgb(250,0,0)' );
@@ -163,9 +166,9 @@ function createMainObject(sceneGraph, a, b, h, x, z, rgb) {
 }
 
 
-function createButton(sceneGraph, x, z, rgb) {
+function createButton(sceneGraph, x, z, rgb, name, textura) {
 
-    const texture = new THREE.TextureLoader().load( 'textures/textura.png' );
+    const texture = new THREE.TextureLoader().load( textura );
     const cubeGeometry = new THREE.BoxGeometry(50, 3, 20);
 
     var cubeMaterial = [];
@@ -187,7 +190,7 @@ function createButton(sceneGraph, x, z, rgb) {
     cube.castShadow = true;
     cube.receiveShadow = true;
 
-    cube.name = "button";
+    cube.name = name;
 }
 
 function createForm(sceneGraph, width, height) {
@@ -246,8 +249,7 @@ function computeFrame(time) {
         cube.translateZ(dispZ);
     }
 
-
-    if (!checkPressButton()) {
+    if (!checkPressButton() && !checkPressUploadButton()) {
         button.position.y = 1.5;
         cube.position.y = 2.5;
 
@@ -288,7 +290,7 @@ function pressButton() {
 
     const button = sceneElements.sceneGraph.getObjectByName("button");
     
-    if (checkPressButton()) {
+    if (checkPressButton() || checkPressUploadButton()) {
         button.position.y = -1.25;
         click_sound();
 
@@ -299,6 +301,9 @@ function pressButton() {
     if (times == 1) {
         if (checkPressButton()) {
             changeImage();
+
+        } else if (checkPressUploadButton()) {
+            document.getElementById("userImage").click();
         }
         helper.render(sceneElements);
         requestAnimationFrame(pressButton)
@@ -422,6 +427,14 @@ function checkPressButton() {
     return false
 }
 
+function checkPressUploadButton() {
+    const cube = sceneElements.sceneGraph.getObjectByName("main_cube");
+
+    let x = cube.position.x; let z = cube.position.z;
+
+    if (x > 75 && x < 125 && z < 10 && z > -10) return true
+    return false
+}
 
 function click_sound() {
 
@@ -441,3 +454,53 @@ function click_sound() {
 function changeImage() {
     myImg.src = randomImg();
 }
+
+function handleFileSelect(evt) {
+    let files = evt.target.files;
+    let f = files[0];
+    var reader = new FileReader();
+
+    /* reader.onload = function(frEvent) {
+        myImg.src = reader.result;
+        all_imgs.push(reader.result)
+        console.log("imagem mudada")
+    } */
+
+    /* reader.onload = function(evt) {
+        ImageTools.resize(f, {
+            width: 50,
+            height: 50,
+        }, function(blob, didItResize) {
+            console.log("imagem", reader.result)
+            console.log("imagem mudada", blob)
+        });
+    } */
+
+    reader.onload = function(event) {
+        var img = new Image();//create a image
+        img.src = event.target.result;//result is base64-encoded Data URI
+        img.onload = function(el) {
+            var elem = document.createElement('canvas');//create a canvas
+
+            elem.width = 50;
+            elem.height = 50;
+
+            //draw in canvas
+            var ctx = elem.getContext('2d');
+            ctx.drawImage(el.target, 0, 0, elem.width, elem.height);
+
+            //get the base64-encoded Data URI from the resize image
+            var srcEncoded = ctx.canvas.toDataURL('image/png', 1);
+
+            myImg.src = srcEncoded;
+            all_imgs.push(srcEncoded)
+            console.log("imagem mudada")
+
+        }
+    }
+    
+
+    reader.readAsDataURL(f);
+}
+
+document.getElementById('userImage').addEventListener('change', handleFileSelect, false);
