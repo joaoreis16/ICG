@@ -74,7 +74,8 @@ function load3DObjects(sceneGraph) {
                 bar = sceneElements.sceneGraph.getObjectByName(bar_name);
                 bar.material.color.set( grey );
 
-                pixel_map.set(bar_name, height/2);
+                if (height < 1) pixel_map.set(bar_name, 1);
+                else pixel_map.set(bar_name, height/4);
             }
         }
     }
@@ -99,6 +100,7 @@ function load3DObjects(sceneGraph) {
                     atual_height -= 1;
                     bar.scale.set(1, atual_height, 1);
                 }
+                bar.translateY(-1/2);
             }
 
             if (atual_height < height) {
@@ -109,10 +111,9 @@ function load3DObjects(sceneGraph) {
                     atual_height += 1; 
                     bar.scale.set(1, atual_height, 1);
                 }
-                 
+                bar.translateY(1/2);
             }
 
-            bar.translateY(0);
         }
 
         requestAnimationFrame(renderAnimation); 
@@ -215,11 +216,12 @@ function createForm(sceneGraph, width, height) {
 
 // ///////////////////////////////////////////// ANIMATIONS AND INTERACTIONS /////////////////////////////////////////////////////////////
 
-var dispX = 4, dispY = 4, dispZ = 4;
+var dispX = 6, dispY = 6, dispZ = 6;
 function computeFrame(time) {
 
     const cube = sceneElements.sceneGraph.getObjectByName("main_cube");
     const button = sceneElements.sceneGraph.getObjectByName("button");
+    const upload_button = sceneElements.sceneGraph.getObjectByName("upload");
 
     let plane_size = 500/2; 
 
@@ -251,6 +253,7 @@ function computeFrame(time) {
 
     if (!checkPressButton() && !checkPressUploadButton()) {
         button.position.y = 1.5;
+        upload_button.position.y = 1.5;
         cube.position.y = 2.5;
 
     } else {
@@ -287,14 +290,19 @@ function jump() {
 
 function pressButton() {
     times += 1;
-
-    const button = sceneElements.sceneGraph.getObjectByName("button");
     
-    if (checkPressButton() || checkPressUploadButton()) {
+    if (checkPressButton()) {
+        const button = sceneElements.sceneGraph.getObjectByName("button");
         button.position.y = -1.25;
         click_sound();
 
+    } else if (checkPressUploadButton()) {
+        const upload_button = sceneElements.sceneGraph.getObjectByName("upload");
+        upload_button.position.y = -1.25;
+        click_sound();
+
     } else {
+        const button = sceneElements.sceneGraph.getObjectByName("button");
         button.position.y = 1.5;
     }
 
@@ -455,52 +463,33 @@ function changeImage() {
     myImg.src = randomImg();
 }
 
-function handleFileSelect(evt) {
+function uploadImage(evt) {
     let files = evt.target.files;
     let f = files[0];
-    var reader = new FileReader();
+    if (f) {
+        var reader = new FileReader();
 
-    /* reader.onload = function(frEvent) {
-        myImg.src = reader.result;
-        all_imgs.push(reader.result)
-        console.log("imagem mudada")
-    } */
-
-    /* reader.onload = function(evt) {
-        ImageTools.resize(f, {
-            width: 50,
-            height: 50,
-        }, function(blob, didItResize) {
-            console.log("imagem", reader.result)
-            console.log("imagem mudada", blob)
-        });
-    } */
-
-    reader.onload = function(event) {
-        var img = new Image();//create a image
-        img.src = event.target.result;//result is base64-encoded Data URI
-        img.onload = function(el) {
-            var elem = document.createElement('canvas');//create a canvas
-
-            elem.width = 50;
-            elem.height = 50;
-
-            //draw in canvas
-            var ctx = elem.getContext('2d');
-            ctx.drawImage(el.target, 0, 0, elem.width, elem.height);
-
-            //get the base64-encoded Data URI from the resize image
-            var srcEncoded = ctx.canvas.toDataURL('image/png', 1);
-
-            myImg.src = srcEncoded;
-            all_imgs.push(srcEncoded)
-            console.log("imagem mudada")
-
-        }
-    }
+        reader.onload = function(event) {
+            var img = new Image();
+            img.src = event.target.result;
     
-
-    reader.readAsDataURL(f);
+            img.onload = function(el) {
+                var elem = document.createElement('canvas');
+                elem.width = 50;
+                elem.height = 50;
+    
+                var ctx = elem.getContext('2d');
+                ctx.drawImage(el.target, 0, 0, elem.width, elem.height);
+    
+                var srcEncoded = ctx.canvas.toDataURL('image/png', 1);
+    
+                myImg.src = srcEncoded;
+                all_imgs.push(srcEncoded)
+            }
+        }
+        
+        reader.readAsDataURL(f);
+    }
 }
 
-document.getElementById('userImage').addEventListener('change', handleFileSelect, false);
+document.getElementById('userImage').addEventListener('change', uploadImage, false);
