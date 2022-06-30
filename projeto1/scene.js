@@ -39,7 +39,8 @@ function load3DObjects(sceneGraph) {
     createButton(sceneGraph, 100, 0, 'rgb(65,105,225)', "upload", 'textures/upload.png');
 
     // main cube
-    createMainObject( sceneGraph, 10, 10, 10, 0, 50, 'rgb(250,0,0)' );
+    let hex_color = document.getElementById("color").value;
+    createMainObject( sceneGraph, 10, 10, 10, 0, 50, hex_color );
 
     // load image 
     myImg.crossOrigin = "Anonymous";
@@ -233,6 +234,9 @@ function computeFrame(time) {
     const button = sceneElements.sceneGraph.getObjectByName("button");
     const upload_button = sceneElements.sceneGraph.getObjectByName("upload");
 
+    let x = cube.position.x; let z = cube.position.z;
+    console.log(x, z)
+
     let plane_size = 500/2; 
 
     if (keyD && cube.position.x < plane_size) {
@@ -267,7 +271,7 @@ function computeFrame(time) {
         cube.position.y = cube.geometry.parameters.height/2;
 
     } else {
-        cube.position.y = 5.5;
+        cube.position.y = 8;
         
     }
     
@@ -441,7 +445,7 @@ function checkPressButton() {
 
     let x = cube.position.x; let z = cube.position.z;
 
-    if (x > -125 && x < -75 && z < 10 && z > -10) return true
+    if (x > -130 && x < -70 && z < 15 && z > -15) return true
     return false
 }
 
@@ -450,7 +454,7 @@ function checkPressUploadButton() {
 
     let x = cube.position.x; let z = cube.position.z;
 
-    if (x > 75 && x < 125 && z < 10 && z > -10) return true
+    if (x > 70 && x < 130 && z < 15 && z > -15) return true
     return false
 }
 
