@@ -39,7 +39,7 @@ function load3DObjects(sceneGraph) {
     createButton(sceneGraph, 100, 0, 'rgb(65,105,225)', "upload", 'textures/upload.png');
 
     // main cube
-    createMainObject( sceneGraph, 5, 5, 5, 0, 50, 'rgb(250,0,0)' );
+    createMainObject( sceneGraph, 8, 8, 8, 0, 50, 'rgb(250,0,0)' );
 
     // load image 
     myImg.crossOrigin = "Anonymous";
@@ -91,6 +91,10 @@ function load3DObjects(sceneGraph) {
 
             const bar = sceneElements.sceneGraph.getObjectByName( bar_name );
             let atual_height = bar.scale.y;
+
+            let rgb_value = Math.round(atual_height * 4)
+            let grey = "rgb("+ rgb_value +","+ rgb_value +","+ rgb_value +")";
+            bar.material.color.set( grey );
 
             if (atual_height > height) {
                 if (atual_height - 1 < height) {
@@ -216,7 +220,7 @@ function createForm(sceneGraph, width, height) {
 
 // ///////////////////////////////////////////// ANIMATIONS AND INTERACTIONS /////////////////////////////////////////////////////////////
 
-var dispX = 6, dispY = 6, dispZ = 6;
+var dispX = 10, dispY = 10, dispZ = 10;
 function computeFrame(time) {
 
     const cube = sceneElements.sceneGraph.getObjectByName("main_cube");
