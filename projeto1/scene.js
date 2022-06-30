@@ -39,7 +39,7 @@ function load3DObjects(sceneGraph) {
     createButton(sceneGraph, 100, 0, 'rgb(65,105,225)', "upload", 'textures/upload.png');
 
     // main cube
-    createMainObject( sceneGraph, 8, 8, 8, 0, 50, 'rgb(250,0,0)' );
+    createMainObject( sceneGraph, 10, 10, 10, 0, 50, 'rgb(250,0,0)' );
 
     // load image 
     myImg.crossOrigin = "Anonymous";
@@ -154,7 +154,13 @@ function createBar(sceneGraph, x, z, rgb) {
 function createMainObject(sceneGraph, a, b, h, x, z, rgb) {
     
     const cubeGeometry = new THREE.BoxGeometry(a, h, b);
-    const cubeMaterial = new THREE.MeshPhongMaterial({ color: rgb });
+    var cubeMaterial = [];
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
+    cubeMaterial.push( new THREE.MeshPhongMaterial( { color: rgb } ) );
     const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     sceneGraph.add(cube);
 
@@ -258,7 +264,7 @@ function computeFrame(time) {
     if (!checkPressButton() && !checkPressUploadButton()) {
         button.position.y = 1.5;
         upload_button.position.y = 1.5;
-        cube.position.y = 2.5;
+        cube.position.y = cube.geometry.parameters.height/2;
 
     } else {
         cube.position.y = 5.5;
@@ -497,3 +503,67 @@ function uploadImage(evt) {
 }
 
 document.getElementById('userImage').addEventListener('change', uploadImage, false);
+document.getElementById('skin').addEventListener('change', uploadSkin, false);
+document.getElementById('color').addEventListener('change', changeColor, false);
+
+function uploadSkin(evt) {
+    let files = evt.target.files;
+    let f = files[0];
+    if (f) {
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+            var img = new Image();
+            img.src = event.target.result;
+    
+            img.onload = function(el) {
+                const cube = sceneElements.sceneGraph.getObjectByName("main_cube");
+
+                const loader = new THREE.TextureLoader();
+                const material = new THREE.MeshPhongMaterial( {map: loader.load(img.src)} );
+                cube.material = material;
+                cube.needsUpdate = true; 
+            }
+        }
+        
+        reader.readAsDataURL(f);
+    }
+}
+
+function changeTexture(textura, texture_top) {
+    const cube = sceneElements.sceneGraph.getObjectByName("main_cube");
+    if (texture_top != '') {
+        console.log("tem textura no topo")
+        let src = "textures/"+ textura;
+        let src_top = "textures/"+ texture_top;
+
+        const loader = new THREE.TextureLoader();
+        var cubeMaterial = [];
+        cubeMaterial.push( new THREE.MeshPhongMaterial( { map:  loader.load(src) } ) );
+        cubeMaterial.push( new THREE.MeshPhongMaterial( { map:  loader.load(src) } ) );
+        cubeMaterial.push( new THREE.MeshPhongMaterial( { map:  loader.load(src_top) } ) );
+        cubeMaterial.push( new THREE.MeshPhongMaterial( { map:  loader.load(src) } ) );
+        cubeMaterial.push( new THREE.MeshPhongMaterial( { map:  loader.load(src) } ) );
+        cubeMaterial.push( new THREE.MeshPhongMaterial( { map:  loader.load(src) } ) );
+
+        cube.material = cubeMaterial;
+        cube.needsUpdate = true;
+
+    } else {
+        let src = "textures/"+ textura;
+
+        const loader = new THREE.TextureLoader();
+        const material = new THREE.MeshPhongMaterial( {map: loader.load(src)} );
+        cube.material = material;
+        cube.needsUpdate = true;
+    } 
+}
+
+function changeColor() {
+    let hex_color = document.getElementById("color").value;
+
+    const cube = sceneElements.sceneGraph.getObjectByName("main_cube");
+    const material = new THREE.MeshPhongMaterial( {color: hex_color} );
+    cube.material = material;
+    cube.needsUpdate = true; 
+}

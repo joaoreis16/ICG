@@ -25,7 +25,7 @@
 		<input id="userImage" type="file" accept=".png, .jpg, .jpeg" />
 
 		<div id="info" class="boxed">
-			<h2>Welcome! You are the <span style="color:red">red cube</span>.</h2>
+			<h2>Welcome! You are the <span style="color:red">cube</span>.</h2>
             <div class="column">
                 Press 
 				<div class="col-lg-4" style="margin: -10px 8px 0px 8px; align-items: center;">
@@ -39,6 +39,25 @@
 			<p>Press <kbd>Space</kbd> to jump</p>
 			<p>Jump on button to activate it</p>
             <p>Use the <kbd>Mouse/Wheel</kbd> to rotate/zoom</p>
+        </div>
+
+		<div id="info1" class="boxed">
+			<h2>Change the cube skin</h2>
+            
+			<div class="col-lg-12">
+				<img src="textures/pedra.jpg" width="60px" style="margin: -10px 6px 0px 6px; cursor: pointer;" onClick="changeTexture('pedra.jpg', '')" /> 
+				<img src="textures/tijolo.jpg" width="60px" style="margin: -10px 6px 0px 6px; cursor: pointer;" onClick="changeTexture('tijolo.jpg', '')" /> 
+				<img src="textures/game.png" width="60px" style="margin: -10px 6px 0px 6px; cursor: pointer;" onClick="changeTexture('game.png', '')" /> 
+				<img src="textures/colors.jpg" width="60px" style="margin: -10px 6px 0px 6px; cursor: pointer;" onClick="changeTexture('colors.jpg', '')" /> 
+				<img src="textures/minecraft1.jpg" width="60px" style="margin: -10px 6px 0px 6px; cursor: pointer;" onClick="changeTexture('minecraft1.jpg', 'minecraft_top.png')" /> 
+			</div>
+
+			<div style="margin-top: 1em; margin-bottom: 1em;">
+				<input type="color" id="color" name="color" value="#e66465">
+				<label for="head">select your favorite color</label>
+			</div>
+
+			<input id="skin" class="custom-file-input" type="file" accept=".png, .jpg, .jpeg" style=" margin-bottom: 1em; margin-left: 8em;" />
         </div>
 
 	</div>
