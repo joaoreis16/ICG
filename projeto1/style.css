@@ -53,6 +53,7 @@ kbd {
 .column { 
 	justify-content: center;
     display: flex;
+    margin-top: 10px;
 }
 
 .row:after {

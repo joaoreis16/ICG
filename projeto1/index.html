@@ -26,6 +26,7 @@
 
 		<div id="info" class="boxed">
 			<h2>Welcome! You are the <span style="color:red">cube</span>.</h2>
+
             <div class="column">
                 Press 
 				<div class="col-lg-4" style="margin: -10px 8px 0px 8px; align-items: center;">
@@ -36,10 +37,20 @@
 				<img src="img/keys.png" width="58px" style="margin: -10px 6px 0px 6px"/> 
 				to move 
             </div>
-			<p>Press <kbd>Space</kbd> to jump</p>
-			<p>Jump on button to activate it</p>
-            <p>Use the <kbd>Mouse/Wheel</kbd> to rotate/zoom</p>
+
+			<p>Press <kbd> Space </kbd> to jump</p>
+
+			<div class="column">
+				Jump on <img src="textures/change.png" width="50px"  style="margin: 0px 5px 0px 5px;"/> to watch <span style="font-weight: bold; margin: 0px 5px 0px 5px;">morphing effect</span>
+			</div>
+
+			<div class="column">
+				Jump on <img src="textures/upload.png" width="50px" style="margin: 0px 5px 0px 5px;"/> to upload an image
+			</div>
+				
+			<p>Use the <kbd> Mouse/Wheel </kbd> to rotate/zoom</p>
         </div>
+
 
 		<div id="info1" class="boxed">
 			<h2>Change the cube skin</h2>
@@ -53,8 +64,8 @@
 			</div>
 
 			<div style="margin-top: 1em; margin-bottom: 1em;">
-				<input type="color" id="color" name="color" value="#ff0000">
 				<label for="head">select your favorite color</label>
+				<input type="color" id="color" name="color" value="#ff0000">
 			</div>
 
 			<input id="skin" class="custom-file-input" type="file" accept=".png, .jpg, .jpeg" style=" margin-bottom: 1em; margin-left: 8em;" />

@@ -24,7 +24,7 @@ requestAnimationFrame(computeFrame);
 
 function load3DObjects(sceneGraph) {
 
-    const planeGeometry = new THREE.PlaneGeometry(500, 500);
+    const planeGeometry = new THREE.PlaneGeometry(300, 200);
     const planeMaterial = new THREE.MeshPhongMaterial({ color: 'rgb(200, 200, 200)', side: THREE.DoubleSide });
     const planeObject = new THREE.Mesh(planeGeometry, planeMaterial);
     sceneGraph.add(planeObject);
@@ -237,31 +237,32 @@ function computeFrame(time) {
     let x = cube.position.x; let z = cube.position.z;
     console.log(x, z)
 
-    let plane_size = 500/2; 
+    let plane_size_x = 300/2 - 10; 
+    let plane_size_z = 200/2 - 10;
 
-    if (keyD && cube.position.x < plane_size) {
+    if (keyD && cube.position.x < plane_size_x) {
         cube.translateX(dispX);
     }
-    if (keyW && cube.position.z > -plane_size) {
+    if (keyW && cube.position.z > -plane_size_z) {
         cube.translateZ(-dispZ);
     }
-    if (keyA && cube.position.x > -plane_size) {
+    if (keyA && cube.position.x > -plane_size_x) {
         cube.translateX(-dispX);
     }
-    if (keyS && cube.position.z < plane_size) {
+    if (keyS && cube.position.z < plane_size_z) {
         cube.translateZ(dispZ);
     }
 
-    if (right && cube.position.x < plane_size) {
+    if (right && cube.position.x < plane_size_x) {
         cube.translateX(dispX);
     }
-    if (up && cube.position.z > -plane_size) {
+    if (up && cube.position.z > -plane_size_z) {
         cube.translateZ(-dispZ);
     }
-    if (left && cube.position.x > -plane_size) {
+    if (left && cube.position.x > -plane_size_x) {
         cube.translateX(-dispX);
     }
-    if (down && cube.position.z < plane_size) {
+    if (down && cube.position.z < plane_size_z) {
         cube.translateZ(dispZ);
     }
 
