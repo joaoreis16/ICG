@@ -8,6 +8,7 @@ const bar_map = new Map();
 const myImg = new Image();
 var imgUrl = randomImg();
 var form_created = false;
+var show_video = false;
 
 const sceneElements = {
     sceneGraph: null,
@@ -53,6 +54,9 @@ function load3DObjects(sceneGraph) {
             createForm(sceneGraph, myImg.width, myImg.height);
             form_created = true;
         }
+
+
+        console.log( myImg.height,  myImg.width)
 
         for (let z = 0; z < myImg.height; z++) {
             for (let x = 0; x < myImg.width; x++) {
@@ -235,7 +239,6 @@ function computeFrame(time) {
     const upload_button = sceneElements.sceneGraph.getObjectByName("upload");
 
     let x = cube.position.x; let z = cube.position.z;
-    console.log(x, z)
 
     let plane_size_x = 300/2 - 10; 
     let plane_size_z = 200/2 - 10;
@@ -572,3 +575,46 @@ function changeColor() {
     cube.material = material;
     cube.needsUpdate = true; 
 }
+
+
+let camera_button = document.querySelector("#start-camera");
+let video = document.querySelector("#video");
+let click_button = document.querySelector("#click-photo");
+let canvas = document.querySelector(".userImage");
+
+camera_button.addEventListener('click', async function() {
+   	let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+	video.srcObject = stream;
+    
+    camera = document.getElementById('video');
+    camera.style.display = 'inline';
+
+    camera = document.getElementById('start-camera');
+    camera.style.display = 'none';
+
+    camera = document.getElementById('click-photo');
+    camera.style.display = 'inline';
+
+});
+
+click_button.addEventListener('click', function() {
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    let image_data_url = canvas.toDataURL('image/jpeg');
+
+    var img = new Image();
+    img.src = image_data_url;
+
+    img.onload = function(el) {
+        var elem = document.createElement('canvas');
+        elem.width = 50;
+        elem.height = 50;
+
+        var ctx = elem.getContext('2d');
+        ctx.drawImage(el.target, 0, 0, elem.width, elem.height);
+
+        var srcEncoded = ctx.canvas.toDataURL('image/png', 1);
+
+        myImg.src = srcEncoded;
+        all_imgs.push(srcEncoded)
+    }
+});

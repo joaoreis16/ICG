@@ -3,6 +3,10 @@ body {
 	margin: 0px;
 }
 
+.userImage {
+	position: absolute;
+	visibility: hidden;
+}
 
 #userImage {
 	position: absolute;
@@ -97,3 +101,14 @@ kbd {
   .custom-file-input:active::before {
     background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
   }
+
+
+  #info2 {
+    font-size: 1em;
+    position: absolute;
+    top: 295px;
+    text-align: center;
+    width: 22%;
+	  right: 10px;
+	  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
